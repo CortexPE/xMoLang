@@ -18,6 +18,7 @@
  *
  *
 */
+
 declare(strict_types=1);
 
 namespace CortexPE\xMoLang\behaviorpack;
@@ -30,5 +31,5 @@ interface BehaviorPack extends ResourcePack {
 	 * Returns whether the behavior pack contains a client-side script.
 	 * @return bool
 	 */
-	public function hasClientScripts() : bool;
+	public function hasClientScripts(): bool;
 }

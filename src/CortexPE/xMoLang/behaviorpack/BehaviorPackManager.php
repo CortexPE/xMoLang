@@ -1,12 +1,36 @@
 <?php
 
+/*
+ *
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * @author PocketMine Team
+ * @link http://www.pocketmine.net/
+ *
+ *
+*/
+
+declare(strict_types=1);
 
 namespace CortexPE\xMoLang\behaviorpack;
 
 
 use CortexPE\xMoLang\Main;
+use ErrorException;
+use InvalidArgumentException;
+use Logger;
 use pocketmine\resourcepacks\ResourcePack;
 use pocketmine\utils\Config;
+use SplFileInfo;
 
 class BehaviorPackManager {
 	/** @var Main */
@@ -20,7 +44,7 @@ class BehaviorPackManager {
 	/** @var bool */
 	protected $hasClientScripts = false;
 
-	public function __construct(Main $loader, string $path, \Logger $logger) {
+	public function __construct(Main $loader, string $path, Logger $logger) {
 		$this->loader = $loader;
 		$this->path = $path;
 
@@ -28,7 +52,7 @@ class BehaviorPackManager {
 			$logger->debug("Behavior packs path $path does not exist, creating directory");
 			mkdir($this->path);
 		} elseif(!is_dir($this->path)) {
-			throw new \InvalidArgumentException("Behavior packs path $path exists and is not a directory");
+			throw new InvalidArgumentException("Behavior packs path $path exists and is not a directory");
 		}
 
 		$loader->saveResource("behavior_packs.yml");
@@ -38,13 +62,13 @@ class BehaviorPackManager {
 
 		$behaviorStack = $resourcePacksConfig->get("behavior_stack", []);
 		if(!is_array($behaviorStack)) {
-			throw new \InvalidArgumentException("\"behavior_stack\" key should contain a list of pack names");
+			throw new InvalidArgumentException("\"behavior_stack\" key should contain a list of pack names");
 		}
 
 		foreach($behaviorStack as $pos => $pack) {
 			try {
 				$pack = (string)$pack;
-			} catch(\ErrorException $e) {
+			} catch(ErrorException $e) {
 				$logger->critical("Found invalid entry in behavior pack list at offset $pos of type " . gettype($pack));
 				continue;
 			}
@@ -60,7 +84,7 @@ class BehaviorPackManager {
 
 				$newPack = null;
 				//Detect the type of resource pack.
-				$info = new \SplFileInfo($packPath);
+				$info = new SplFileInfo($packPath);
 				switch($info->getExtension()) {
 					case "zip":
 					case "mcpack":
@@ -72,7 +96,7 @@ class BehaviorPackManager {
 					$this->behaviorPacks[] = $newPack;
 					$this->uuidList[strtolower($newPack->getPackId())] = $newPack;
 
-					if($newPack->hasClientScripts()){
+					if($newPack->hasClientScripts()) {
 						$this->hasClientScripts = true;
 					}
 				} else {
