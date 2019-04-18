@@ -1,0 +1,8 @@
+name: xMoLang
+main: CortexPE\xMoLang\Main
+version: 1.0.0
+api: 3.0.0
+load: POSTWORLD
+authors: ["CortexPE", "Spajker7"]
+description: Use client-side scripting in PocketMine-MP!
+website: https://CortexPE.xyz
