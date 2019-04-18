@@ -62,14 +62,14 @@ class PacketInjector implements Listener {
 		$pk = $ev->getPacket();
 		if($pk instanceof StartGamePacket) {
 			$pk->gameRules["experimentalgameplay"] = [1, true];
-		} elseif($pk instanceof ResourcePacksInfoPacket || $pk instanceof ResourcePackStackPacket) {
+		} elseif($pk instanceof ResourcePacksInfoPacket) {
 			$mgr = $this->loader->getBehaviorPackManager();
 			$pk->behaviorPackEntries = $mgr->getBehaviorPacks();
-			if($pk instanceof ResourcePackStackPacket) {
-				$pk->isExperimental = true;
-			} else {
-				$pk->hasScripts = $mgr->hasClientScripts();
-			}
+			$pk->hasScripts = $mgr->hasClientScripts();
+		} elseif($pk instanceof ResourcePackStackPacket) {
+			$mgr = $this->loader->getBehaviorPackManager();
+			$pk->behaviorPackStack = $mgr->getBehaviorPacks();
+			$pk->isExperimental = true;
 		}
 	}
 
